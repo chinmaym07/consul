@@ -69,6 +69,10 @@ func (c *DiscoveryChain) Get(args *structs.DiscoveryChainRequest, reply *structs
 			reply.Index = index
 			reply.Chain = chain
 
+			if chain.IsDefault() {
+				return errNotFound
+			}
+
 			return nil
 		})
 }

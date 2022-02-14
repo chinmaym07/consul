@@ -317,6 +317,8 @@ func TestConfigEntry_Get_BlockOnNonExistent(t *testing.T) {
 		Kind: structs.ServiceDefaults,
 		Name: "alpha",
 	}
+	require.NoError(t, entry.Normalize())
+	require.NoError(t, entry.Validate())
 	require.NoError(t, store.EnsureConfigEntry(1, entry))
 
 	ctx, cancel := context.WithCancel(context.Background())
