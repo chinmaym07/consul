@@ -18,6 +18,7 @@ const (
 	ConsulClient       string = "client"
 	ConsulServer       string = "server"
 	Coordinate         string = "coordinate"
+	DiscoveryChain     string = "discovery_chain"
 	DNS                string = "dns"
 	Envoy              string = "envoy"
 	FederationState    string = "federation_state"
