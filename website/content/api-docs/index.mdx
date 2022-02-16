@@ -75,6 +75,20 @@ $ curl \
     http://127.0.0.1:8500/v1/kv/foo
 ```
 
+## Parses URL-Encoded Resource Names
+
+Some Consul HTTP API endpoints require resource names in the URL. To pass a resource
+name containing characters that are invalid in a URL path segment, such as `/` or ` `,
+the resource name must be URL-encoded into the HTTP API call URL.
+
+Though any resource name *can* be used with the HTTP API if URL-encoded,
+we typically recommend using resource names that don't require URL-encoding anyways.
+Depending on the validation that Consul applies to a resource name, Consul may still
+reject a request if it considers the resource name invalid for that endpoint. And
+even if Consul considers the resource name valid, it may degrade other functionality,
+such as failed [DNS lookups](/docs/discovery/dns)
+for nodes or services with names containing invalid DNS characters.
+
 ## Translated Addresses
 
 Consul 0.7 added the ability to translate addresses in HTTP response based on
