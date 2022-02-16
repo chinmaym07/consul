@@ -640,7 +640,8 @@ The corresponding CLI command is [`consul join`](/commands/join).
 ### Parameters
 
 - `address` `(string: <required>)` - Specifies the address of the other agent to
-  join. This is specified as part of the URL.
+  join. This is specified as part of the URL as a path segment and
+  [can be URL-encoded](/api-docs#parses-url-encoded-resource-names).
 
 - `wan` `(bool: false)` - Specifies to try and join over the WAN pool. This is
   only optional for agents running in server mode. This is specified as part of
@@ -720,7 +721,9 @@ The corresponding CLI command is [`consul force-leave`](/commands/force-leave).
 
 ### Parameters
 
-- `node` `(string: <required>)` - Specifies the name of the node to be forced into `left` state. This is specified as part of the URL.
+- `node` `(string: <required>)` - Specifies the name of the node to be forced into `left` state.
+  This is specified as part of the URL as a path segment and
+  [can be URL-encoded](/api-docs#parses-url-encoded-resource-names).
 
 - `prune` `(bool: false)` - Specifies whether to forcibly remove the node from the list of members.
   Pruning a node in the `left` or `failed` state removes it from the list altogether. 
