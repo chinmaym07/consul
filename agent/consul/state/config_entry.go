@@ -450,12 +450,7 @@ func (s *Store) discoveryChainTargetsTxn(tx ReadTxn, ws memdb.WatchSet, dc, serv
 }
 
 // discoveryChainSourcesTxn will return a list of services whose discovery chains have the given service as a target
-func (s *Store) discoveryChainSourcesTxn(
-	tx ReadTxn,
-	ws memdb.WatchSet,
-	dc string,
-	destination structs.ServiceName,
-) (uint64, []structs.ServiceName, error) {
+func (s *Store) discoveryChainSourcesTxn(tx ReadTxn, ws memdb.WatchSet, dc string, destination structs.ServiceName) (uint64, []structs.ServiceName, error) {
 	seenLink := map[structs.ServiceName]bool{destination: true}
 
 	queue := []structs.ServiceName{destination}
@@ -1009,14 +1004,14 @@ func readDiscoveryChainConfigEntriesTxn(
 	idx, router, err := getRouterConfigEntryTxn(tx, ws, serviceName, overrides, entMeta)
 	if err != nil {
 		return 0, nil, err
+	} else if router != nil {
+		res.Routers[sid] = router
 	}
-
 	if idx > maxIdx {
 		maxIdx = idx
 	}
 
 	if router != nil {
-		res.Routers[sid] = router
 		for _, svc := range router.ListRelatedServices() {
 			todoSplitters[svc] = struct{}{}
 		}
@@ -1043,7 +1038,6 @@ func readDiscoveryChainConfigEntriesTxn(
 		if err != nil {
 			return 0, nil, err
 		}
-
 		if idx > maxIdx {
 			maxIdx = idx
 		}
@@ -1084,7 +1078,6 @@ func readDiscoveryChainConfigEntriesTxn(
 		if err != nil {
 			return 0, nil, err
 		}
-
 		if idx > maxIdx {
 			maxIdx = idx
 		}
@@ -1117,11 +1110,9 @@ func readDiscoveryChainConfigEntriesTxn(
 			if err != nil {
 				return 0, nil, err
 			}
-
 			if idx > maxIdx {
 				maxIdx = idx
 			}
-
 			if proxy != nil {
 				res.ProxyDefaults[proxy.PartitionOrDefault()] = proxy
 			}
@@ -1131,7 +1122,6 @@ func readDiscoveryChainConfigEntriesTxn(
 		if err != nil {
 			return 0, nil, err
 		}
-
 		if idx > maxIdx {
 			maxIdx = idx
 		}
