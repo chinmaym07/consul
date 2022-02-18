@@ -9,10 +9,12 @@ import (
 	"time"
 
 	msgpackrpc "github.com/hashicorp/consul-net-rpc/net-rpc-msgpackrpc"
+	hashstructure_v2 "github.com/mitchellh/hashstructure/v2"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/hashicorp/consul/acl"
+	"github.com/hashicorp/consul/agent/configentry"
 	"github.com/hashicorp/consul/agent/structs"
 	"github.com/hashicorp/consul/sdk/testutil/retry"
 	"github.com/hashicorp/consul/testrpc"
@@ -2155,6 +2157,41 @@ func TestConfigEntry_ResolveServiceConfig_ProxyDefaultsProtocol_UsedForAllUpstre
 		QueryMeta: out.QueryMeta,
 	}
 	require.Equal(t, expected, out)
+}
+
+func BenchmarkConfigEntry_ResolveServiceConfig_Hash(b *testing.B) {
+	res := &configentry.ResolvedServiceConfigSet{}
+
+	res.AddServiceDefaults(&structs.ServiceConfigEntry{
+		Kind:     structs.ServiceDefaults,
+		Name:     "web",
+		Protocol: "http",
+	})
+	res.AddServiceDefaults(&structs.ServiceConfigEntry{
+		Kind:     structs.ServiceDefaults,
+		Name:     "up1",
+		Protocol: "http",
+	})
+	res.AddServiceDefaults(&structs.ServiceConfigEntry{
+		Kind:     structs.ServiceDefaults,
+		Name:     "up2",
+		Protocol: "http",
+	})
+	res.AddProxyDefaults(&structs.ProxyConfigEntry{
+		Kind: structs.ProxyDefaults,
+		Name: structs.ProxyConfigGlobal,
+		Config: map[string]interface{}{
+			"protocol": "grpc",
+		},
+	})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := hashstructure_v2.Hash(res, hashstructure_v2.FormatV2, nil)
+		if err != nil {
+			b.Fatalf("error: %v", err)
+		}
+	}
 }
 
 func TestConfigEntry_ResolveServiceConfig_BlockOnNoChange(t *testing.T) {
