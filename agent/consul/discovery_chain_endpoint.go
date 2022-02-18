@@ -5,7 +5,6 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/hashicorp/go-hclog"
 	memdb "github.com/hashicorp/go-memdb"
 	hashstructure_v2 "github.com/mitchellh/hashstructure/v2"
 
@@ -16,8 +15,7 @@ import (
 )
 
 type DiscoveryChain struct {
-	srv    *Server
-	logger hclog.Logger
+	srv *Server
 }
 
 func (c *DiscoveryChain) Get(args *structs.DiscoveryChainRequest, reply *structs.DiscoveryChainResponse) error {
